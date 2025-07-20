@@ -61,25 +61,25 @@ const NotificationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundPrimary,
-    paddingTop: spacing.xl * 2, // Adjust for status bar
+    backgroundColor: colors.backgroundLight,
+    paddingTop: spacing.spacingXl * 2, // Adjust for status bar
   },
   headerTitle: {
     fontFamily: typography.fontFamily.interBold,
-    fontSize: typography.sizes.heading1,
-    color: colors.neutralDark,
-    paddingHorizontal: spacing.md,
-    marginBottom: spacing.md,
+    fontSize: typography.heading1.fontSize,
+    color: colors.textPrimary,
+    paddingHorizontal: spacing.spacingMd,
+    marginBottom: spacing.spacingMd,
   },
   listContent: {
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.spacingMd,
+    paddingBottom: spacing.spacingMd,
   },
   notificationItem: {
     backgroundColor: colors.surfaceWhite,
     borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.md,
+    padding: spacing.spacingMd,
+    marginBottom: spacing.spacingMd,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -90,24 +90,24 @@ const styles = StyleSheet.create({
   },
   unread: {
     borderLeftWidth: 4,
-    borderLeftColor: colors.brandPrimary,
+    borderLeftColor: colors.brandPurpleVibrant,
   },
   notificationTitle: {
     fontFamily: typography.fontFamily.interSemiBold,
-    fontSize: typography.sizes.bodyLarge,
-    color: colors.neutralDark,
+    fontSize: typography.body.fontSize, // No bodyLarge, using body
+    color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   notificationMessage: {
     fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralMedium,
+    fontSize: typography.body.fontSize,
+    color: colors.textSecondary,
     marginBottom: spacing.xs,
   },
   notificationTimestamp: {
     fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.label,
-    color: colors.neutralMedium,
+    fontSize: typography.label.fontSize,
+    color: colors.textSecondary,
     textAlign: "right",
   },
 });

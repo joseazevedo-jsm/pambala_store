@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView, Platform } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/RootNavigator";
@@ -33,7 +33,7 @@ const ProductDetailScreen = () => {
   const product = MOCK_PRODUCTS.find((p) => p.id === productId);
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
+  const wishlistItems = useSelector((state: RootState) => state.wishlist.productIds);
 
   const isInCart = cartItems.some(item => item.id === productId);
   const isInWishlist = wishlistItems.includes(productId);
@@ -77,31 +77,34 @@ const ProductDetailScreen = () => {
   });
 
   return (
-    <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Carousel data={carouselData} />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIcon}>
+          <MaterialCommunityIcons name="arrow-left" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle} numberOfLines={1}>{product.name}</Text>
+        <TouchableOpacity onPress={handleToggleWishlist} style={styles.headerIcon}>
+          <MaterialCommunityIcons
+            name={isInWishlist ? "heart" : "heart-outline"}
+            size={24}
+            color={isInWishlist ? colors.brandPurpleVibrant : colors.textPrimary}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.carouselContainer}>
+          <Carousel data={carouselData} />
+        </View>
 
         <View style={styles.contentContainer}>
-          <View style={styles.headerRow}>
-            <Text style={styles.productName}>{product.name}</Text>
-            <TouchableOpacity onPress={handleToggleWishlist}>
-              <MaterialCommunityIcons
-                name={isInWishlist ? "heart" : "heart-outline"}
-                size={28}
-                color={isInWishlist ? colors.feedbackError : colors.neutralMedium}
-              />
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.productName}>{product.name}</Text>
+          <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
 
-          <PriceDisplay
-            price={product.price}
-            originalPrice={product.originalPrice}
-            style={styles.priceDisplay}
-            priceStyle={styles.currentPrice}
-            originalPriceStyle={styles.originalPrice}
-          />
+          <View style={styles.divider} />
 
-          <Text style={styles.description}>{product.description}</Text>
+          <Text style={styles.descriptionTitle}>Description</Text>
+          <Text style={styles.descriptionText}>{product.description}</Text>
 
           <View style={styles.infoSection}>
             <InfoRow iconName="truck-delivery" text={`Shipping: ${product.shippingOptions.join(", ")}`} />
@@ -109,28 +112,41 @@ const ProductDetailScreen = () => {
             <InfoRow iconName="store-outline" text={`Seller: ${product.sellerInfo.name} (${product.sellerInfo.rating} / 5)`} />
             <InfoRow iconName="tag-text-outline" text={`Condition: ${product.condition}`} />
           </View>
-
-          <Animated.View style={animatedButtonStyle}>
-            <Button
-              title={isInCart ? "Added to Cart" : "Add to Cart"}
-              onPress={handleAddToCart}
-              variant="primary"
-              disabled={isInCart}
-            />
-          </Animated.View>
-          {showAddedToCartMessage && (
-            <Text style={styles.addedToCartMessage}>Item added to cart!</Text>
-          )}
         </View>
       </ScrollView>
-    </View>
+
+      <View style={styles.bottomActionBar}>
+        <Animated.View style={[animatedButtonStyle, styles.addToCartButtonWrapper]}>
+          <Button
+            title={isInCart ? "Added to Cart" : "Add to Cart"}
+            onPress={handleAddToCart}
+            variant="outline"
+            disabled={isInCart}
+            style={styles.actionButton}
+          />
+        </Animated.View>
+        <Button
+          title="Buy Now"
+          onPress={() => { /* Navigate to checkout */ }}
+          variant="primary"
+          style={styles.actionButton}
+        />
+      </View>
+      {showAddedToCartMessage && (
+        <Text style={styles.addedToCartMessage}>Item added to cart!</Text>
+      )}
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.backgroundLight,
+  },
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundPrimary,
+    backgroundColor: colors.backgroundLight,
   },
   errorContainer: {
     flex: 1,
@@ -138,60 +154,111 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   errorText: {
-    fontSize: typography.sizes.heading1,
-    fontFamily: typography.fontFamily.interBold,
+    ...typography.heading1,
     color: colors.feedbackError,
   },
-  contentContainer: {
-    padding: spacing.md,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.spacingMd,
+    paddingVertical: spacing.spacingSm,
     backgroundColor: colors.surfaceWhite,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginTop: -spacing.lg, // Overlap with carousel slightly
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderNeutral,
   },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.sm,
+  headerIcon: {
+    padding: spacing.xs, // Increase touch target
+  },
+  headerTitle: {
+    ...typography.heading2,
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: spacing.spacingMd,
+  },
+  scrollViewContent: {
+    paddingBottom: spacing.spacingXl * 2, // Add extra padding for the fixed action bar
+  },
+  carouselContainer: {
+    aspectRatio: 1,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    overflow: 'hidden',
+    marginBottom: spacing.spacingMd,
+  },
+  contentContainer: {
+    padding: spacing.spacingLg,
+    backgroundColor: colors.surfaceWhite,
+    // Removed borderTopLeftRadius and borderTopRightRadius as they are now on carouselContainer
+    // Removed marginTop as it's not needed with the new header and carousel structure
   },
   productName: {
-    fontFamily: typography.fontFamily.interSemiBold,
-    fontSize: typography.sizes.productTitle,
-    color: colors.neutralDark,
-    flex: 1,
-    marginRight: spacing.md,
+    ...typography.heading1,
+    color: colors.textPrimary,
+    marginBottom: spacing.spacingSm,
   },
-  priceDisplay: {
-    marginBottom: spacing.md,
+  productPrice: {
+    ...typography.display,
+    color: colors.brandPurpleVibrant,
+    marginTop: spacing.spacingSm,
   },
-  currentPrice: {
-    fontFamily: typography.fontFamily.interBold,
-    fontSize: typography.sizes.heading2,
-    color: colors.brandPrimary,
+  divider: {
+    height: 1,
+    backgroundColor: colors.borderNeutral,
+    marginVertical: spacing.spacingLg,
   },
-  originalPrice: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralMedium,
-    textDecorationLine: "line-through",
-    marginLeft: spacing.sm,
+  descriptionTitle: {
+    ...typography.heading2,
+    color: colors.textPrimary,
+    marginBottom: spacing.spacingSm,
   },
-  description: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralMedium,
-    marginBottom: spacing.lg,
+  descriptionText: {
+    ...typography.body,
+    color: colors.textSecondary,
+    marginBottom: spacing.spacingLg,
   },
   infoSection: {
-    marginBottom: spacing.lg,
+    marginBottom: spacing.spacingLg,
+  },
+  bottomActionBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.surfaceWhite,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: spacing.spacingMd,
+    paddingVertical: spacing.spacingMd,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderNeutral,
+    // Shadow for iOS
+    ...(Platform.OS === 'ios' && {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: -3 },
+      shadowOpacity: 0.1,
+      shadowRadius: 5,
+    }),
+    // Elevation for Android
+    elevation: 10,
+  },
+  addToCartButtonWrapper: {
+    flex: 1,
+    marginRight: spacing.spacingMd,
+  },
+  actionButton: {
+    flex: 1,
   },
   addedToCartMessage: {
-    fontFamily: typography.fontFamily.interMedium,
-    fontSize: typography.sizes.body,
+    ...typography.body,
     color: colors.feedbackSuccess,
     textAlign: "center",
-    marginTop: spacing.sm,
+    marginTop: spacing.spacingSm,
+    position: 'absolute',
+    bottom: spacing.spacingXl + spacing.spacingMd, // Position above the action bar
+    left: 0,
+    right: 0,
   },
 });
 

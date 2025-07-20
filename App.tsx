@@ -12,10 +12,14 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
-    'Inter-Regular': require('./assets/fonts/Inter-Regular.ttf'),
-    'Inter-Medium': require('./assets/fonts/Inter-Medium.ttf'),
-    'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf'),
-    'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    "Inter-Regular": require("./assets/fonts/Inter-Regular.ttf"),
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    "Inter-Medium": require("./assets/fonts/Inter-Medium.ttf"),
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    "Inter-SemiBold": require("./assets/fonts/Inter-SemiBold.ttf"),
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    "Inter-Bold": require("./assets/fonts/Inter-Bold.ttf"),
   });
 
   React.useEffect(() => {
@@ -36,7 +40,6 @@ export default function App() {
     console.error("Font loading failed, rendering app despite error.");
     // You might want to render an error screen or fallback UI here
   }
-
 
   return (
     <Provider store={store}>

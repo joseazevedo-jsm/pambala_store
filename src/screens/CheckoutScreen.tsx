@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Platform } from "react-native";
 import { colors } from "../styles/colors";
 import { spacing } from "../styles/spacing";
 import { typography } from "../styles/typography";
@@ -36,10 +36,10 @@ const CheckoutScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color={colors.neutralDark} />
+          <MaterialCommunityIcons name="arrow-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Checkout</Text>
         <View style={{ width: 24 }} />{/* Spacer */}
@@ -75,9 +75,10 @@ const CheckoutScreen = () => {
         <Button
           title={currentStep === steps.length - 1 ? "Place Order" : "Next"}
           onPress={handleNext}
+          variant="primary"
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -101,34 +102,39 @@ const OrderSummaryStep = () => (
 );
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.backgroundLight,
+  },
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundPrimary,
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: spacing.md,
-    paddingTop: spacing.xl * 1.5, // Adjust for status bar
+    paddingHorizontal: spacing.spacingMd,
+    paddingVertical: spacing.spacingSm,
     backgroundColor: colors.surfaceWhite,
     borderBottomWidth: 1,
-    borderBottomColor: colors.neutralLight,
+    borderBottomColor: colors.borderNeutral,
+    // Adjust paddingTop for iOS status bar if needed, or use SafeAreaView
+    paddingTop: Platform.OS === 'ios' ? spacing.spacingMd : spacing.spacingSm, // Example adjustment
   },
   backButton: {
     padding: spacing.xs,
   },
   headerTitle: {
-    fontFamily: typography.fontFamily.interSemiBold,
-    fontSize: typography.sizes.heading2,
-    color: colors.neutralDark,
+    ...typography.heading1,
+    color: colors.textPrimary,
   },
   progressBarContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.spacingXl,
+    paddingVertical: spacing.spacingMd,
     backgroundColor: colors.surfaceWhite,
   },
   progressBarStep: {
@@ -142,10 +148,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   progressBarDotActive: {
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.brandPurpleVibrant,
   },
   progressBarDotInactive: {
-    backgroundColor: colors.neutralLight,
+    backgroundColor: colors.borderNeutral,
   },
   progressBarLine: {
     height: 2,
@@ -153,42 +159,40 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.xs,
   },
   progressBarLineActive: {
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.brandPurpleVibrant,
   },
   progressBarLineInactive: {
-    backgroundColor: colors.neutralLight,
+    backgroundColor: colors.borderNeutral,
   },
   stepTitle: {
-    fontFamily: typography.fontFamily.interBold,
-    fontSize: typography.sizes.heading1,
-    color: colors.neutralDark,
+    ...typography.heading1,
+    color: colors.textPrimary,
     textAlign: "center",
-    marginTop: spacing.md,
-    marginBottom: spacing.lg,
+    marginTop: spacing.spacingMd,
+    marginBottom: spacing.spacingLg,
   },
   content: {
     flex: 1,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.spacingMd,
   },
   stepContainer: {
     backgroundColor: colors.surfaceWhite,
     borderRadius: 12,
-    padding: spacing.md,
+    padding: spacing.spacingMd,
     minHeight: 200, // Ensure some height for content
     justifyContent: "center",
     alignItems: "center",
   },
   stepText: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.bodyLarge,
-    color: colors.neutralMedium,
+    ...typography.body,
+    color: colors.textSecondary,
     textAlign: "center",
   },
   footer: {
-    padding: spacing.md,
+    padding: spacing.spacingMd,
     backgroundColor: colors.surfaceWhite,
     borderTopWidth: 1,
-    borderTopColor: colors.neutralLight,
+    borderTopColor: colors.borderNeutral,
   },
 });
 

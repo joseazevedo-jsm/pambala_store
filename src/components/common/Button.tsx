@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, StyleSheet, ViewStyle } from "react-native";
 import { colors } from "../../styles/colors";
 import { typography } from "../../styles/typography";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -7,9 +7,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "outline"; // Added 'outline' variant
   leftIcon?: keyof typeof MaterialCommunityIcons.glyphMap;
   disabled?: boolean;
+  style?: ViewStyle; // Added style prop for external styling
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -18,27 +19,57 @@ const Button: React.FC<ButtonProps> = ({
   variant = "primary",
   leftIcon,
   disabled = false,
+  style,
 }) => {
-  const getBackgroundColor = () => {
+  const getButtonStyles = () => {
+    let backgroundColor: string;
+    let textColor: string;
+    let borderColor: string | undefined;
+    let borderWidth: number | undefined;
+
     if (disabled) {
-      return colors.neutralLight;
+      backgroundColor = colors.borderNeutral; // Using borderNeutral for disabled background
+      textColor = colors.textSecondary; // Using textSecondary for disabled text
+    } else {
+      switch (variant) {
+        case "primary":
+          backgroundColor = colors.brandPurpleVibrant;
+          textColor = colors.surfaceWhite;
+          break;
+        case "secondary":
+          backgroundColor = colors.brandPurpleDark;
+          textColor = colors.surfaceWhite;
+          break;
+        case "outline":
+          backgroundColor = "transparent";
+          textColor = colors.brandPurpleVibrant;
+          borderColor = colors.brandPurpleVibrant;
+          borderWidth = 1;
+          break;
+        default:
+          backgroundColor = colors.brandPurpleVibrant;
+          textColor = colors.surfaceWhite;
+      }
     }
-    return variant === "primary" ? colors.brandPrimary : colors.actionAccent;
+
+    return {
+      backgroundColor,
+      color: textColor,
+      borderColor,
+      borderWidth,
+    };
   };
 
-  const getTextColor = () => {
-    if (disabled) {
-      return colors.neutralMedium;
-    }
-    return colors.surfaceWhite;
-  };
-
-  const backgroundColor = getBackgroundColor();
-  const textColor = getTextColor();
+  const { backgroundColor, color: textColor, borderColor, borderWidth } = getButtonStyles();
 
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor }, disabled && styles.disabledButton]}
+      style={[
+        styles.button,
+        { backgroundColor, borderColor, borderWidth },
+        disabled && styles.disabled, // Use a more generic disabled style
+        style, // Apply external style prop
+      ]}
       onPress={onPress}
       disabled={disabled}
     >
@@ -50,7 +81,7 @@ const Button: React.FC<ButtonProps> = ({
           style={styles.icon}
         />
       )}
-      <Text style={[styles.buttonText, { color: textColor }]}>{title}</Text>
+      <Text style={[typography.button, { color: textColor }]}>{title}</Text>
     </TouchableOpacity>
   );
 };
@@ -63,15 +94,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
   },
-  buttonText: {
-    fontFamily: typography.fontFamily.interSemiBold,
-    fontSize: typography.sizes.button,
-  },
   icon: {
     marginRight: 8,
   },
-  disabledButton: {
-    opacity: 0.7,
+  disabled: {
+    opacity: 0.6, // Reduced opacity for disabled state
   },
 });
 

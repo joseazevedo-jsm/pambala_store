@@ -10,6 +10,7 @@ import TabIcon from "../components/navigation/TabIcon";
 import { colors } from "../styles/colors";
 import { Platform } from "react-native";
 import NotificationScreen from '../screens/NotificationScreen';
+import { typography } from "../styles/typography";
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -25,10 +26,10 @@ const HomeStackNavigator = () => {
 const TabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: colors.brandPrimary,
-        tabBarInactiveTintColor: colors.neutralMedium,
+        tabBarActiveTintColor: colors.brandPurpleVibrant, // Updated color
+        tabBarInactiveTintColor: colors.textSecondary, // Updated color
         tabBarStyle: {
           backgroundColor: colors.surfaceWhite,
           borderTopWidth: 0,
@@ -42,20 +43,21 @@ const TabNavigator = () => {
           }),
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontFamily: "Inter-Medium",
+          ...typography.label, // Use typography.label for base styles
+          // Apply semibold for focused state
+          fontFamily: route.name === 'HomeTab' || route.name === 'SellTab' || route.name === 'SavedTab' || route.name === 'NotificationTab' || route.name === 'AccountTab' ? typography.fontFamily.interSemiBold : typography.fontFamily.interMedium, // Apply semibold for active labels
           marginTop: -5,
           marginBottom: 5,
         },
-      }}
+      })}
     >
       <Tab.Screen
         name="HomeTab"
         component={HomeStackNavigator}
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size, focused }) => (
-            <TabIcon name="home" color={color} size={size} focused={focused} />
+          tabBarIcon: ({ size, focused }) => (
+            <TabIcon name="home" size={size} focused={focused} />
           ),
         }}
       />
@@ -64,8 +66,8 @@ const TabNavigator = () => {
         component={SellScreen}
         options={{
           title: "Sell",
-          tabBarIcon: ({ color, size, focused }) => (
-            <TabIcon name="tag-outline" color={color} size={size} focused={focused} />
+          tabBarIcon: ({ size, focused }) => (
+            <TabIcon name="tag-outline" size={size} focused={focused} />
           ),
         }}
       />
@@ -74,8 +76,8 @@ const TabNavigator = () => {
         component={SavedScreen}
         options={{
           title: "Saved",
-          tabBarIcon: ({ color, size, focused }) => (
-            <TabIcon name="heart-outline" color={color} size={size} focused={focused} />
+          tabBarIcon: ({ size, focused }) => (
+            <TabIcon name="heart-outline" size={size} focused={focused} />
           ),
         }}
       />
@@ -83,9 +85,9 @@ const TabNavigator = () => {
         name="NotificationTab"
         component={NotificationScreen}
         options={{
-          title: "Notifications",
-          tabBarIcon: ({ color, size, focused }) => (
-            <TabIcon name="bell-outline" color={color} size={size} focused={focused} />
+          title: "Alerts", // Changed to "Alerts"
+          tabBarIcon: ({ size, focused }) => (
+            <TabIcon name="bell-outline" size={size} focused={focused} />
           ),
         }}
       />
@@ -94,8 +96,8 @@ const TabNavigator = () => {
         component={AccountScreen}
         options={{
           title: "Account",
-          tabBarIcon: ({ color, size, focused }) => (
-            <TabIcon name="account-outline" color={color} size={size} focused={focused} />
+          tabBarIcon: ({ size, focused }) => (
+            <TabIcon name="account-outline" size={size} focused={focused} />
           ),
         }}
       />

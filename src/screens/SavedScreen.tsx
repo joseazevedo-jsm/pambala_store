@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/RootNavigator";
+import Button from "../components/common/Button";
 
 type SavedScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ProductDetail'>;
 
@@ -24,12 +25,24 @@ const SavedScreen = () => {
     wishlistProductIds.includes(product.id)
   );
 
+  const renderHeader = () => (
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>Itens Salvos</Text>
+    </View>
+  );
+
   if (wishlistProducts.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <MaterialCommunityIcons name="heart-off" size={80} color={colors.neutralLight} />
-        <Text style={styles.emptyText}>Your wishlist is empty!</Text>
-        <Text style={styles.emptySubText}>Save products to view them here later.</Text>
+        <MaterialCommunityIcons name="heart" size={80} color={colors.borderNeutral} />
+        <Text style={styles.emptyText}>Sua lista está vazia</Text>
+        <Text style={styles.emptySubText}>Adicione produtos à sua lista de desejos para vê-los aqui.</Text>
+        <Button
+          title="Explorar Produtos"
+          onPress={() => navigation.navigate("HomeTab")} // Assuming "HomeTab" is the route name for your home screen
+          variant="primary"
+          style={styles.exploreButton}
+        />
       </View>
     );
   }
@@ -39,6 +52,7 @@ const SavedScreen = () => {
       <FlatList
         data={wishlistProducts}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
         renderItem={({ item }) => (
           <ProductCard
             imageUrl={item.imageUrl}
@@ -46,6 +60,8 @@ const SavedScreen = () => {
             price={item.price}
             originalPrice={item.originalPrice}
             onPress={() => navigation.navigate("ProductDetail", { productId: item.id })}
+            isSaved={true} // Explicitly set to true for saved items
+            onToggleSave={() => dispatch(removeFromWishlist(item.id))}
           />
         )}
         numColumns={2}
@@ -59,35 +75,49 @@ const SavedScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundPrimary,
-    paddingTop: spacing.md,
+    backgroundColor: colors.backgroundLight, // Updated background color
+  },
+  header: {
+    paddingHorizontal: spacing.spacingMd,
+    paddingVertical: spacing.spacingSm,
+    backgroundColor: colors.surfaceWhite,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderNeutral,
+    marginBottom: spacing.spacingMd,
+  },
+  headerTitle: {
+    ...typography.heading1,
+    color: colors.textPrimary,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: spacing.md,
+    padding: spacing.spacingMd,
+    backgroundColor: colors.backgroundLight, // Ensure empty state also uses backgroundLight
   },
   emptyText: {
-    fontFamily: typography.fontFamily.interBold,
-    fontSize: typography.sizes.heading2,
-    color: colors.neutralMedium,
-    marginTop: spacing.md,
+    ...typography.heading2, // Updated typography
+    color: colors.textPrimary, // Updated color
+    marginTop: spacing.spacingMd,
   },
   emptySubText: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralLight,
-    marginTop: spacing.sm,
+    ...typography.body, // Updated typography
+    color: colors.textSecondary, // Updated color
+    marginTop: spacing.spacingSm,
     textAlign: "center",
+    marginBottom: spacing.spacingLg, // Added margin bottom for button
+  },
+  exploreButton: {
+    width: '80%', // Make button wider
   },
   productList: {
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.spacingMd,
+    paddingBottom: spacing.spacingMd,
   },
   productGrid: {
     justifyContent: "space-between",
-    marginBottom: spacing.md,
+    marginBottom: spacing.spacingMd,
   },
 });
 

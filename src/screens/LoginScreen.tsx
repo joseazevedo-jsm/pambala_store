@@ -21,7 +21,7 @@ const LoginScreen = () => {
   const handleLogin = () => {
     // In a real app, you'd send these credentials to an API
     // For now, we'll simulate a successful login with mock tokens
-    if (email === "test@example.com" && password === "password") {
+    if (email === "test" && password === "test") {
       dispatch(setAuthTokens({ userToken: "mock-token-123", userId: "user-1" }));
       alert("Login Successful!");
     } else {
@@ -62,32 +62,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.backgroundPrimary,
-    padding: spacing.md,
+    backgroundColor: colors.backgroundLight,
+    padding: spacing.spacingMd,
   },
   title: {
     fontFamily: typography.fontFamily.interBold,
-    fontSize: typography.sizes.heading1,
-    color: colors.neutralDark,
-    marginBottom: spacing.xl,
+    fontSize: typography.heading1.fontSize,
+    color: colors.textPrimary,
+    marginBottom: spacing.spacingXl,
   },
   input: {
     width: "100%",
     backgroundColor: colors.surfaceWhite,
-    padding: spacing.md,
+    padding: spacing.spacingMd,
     borderRadius: 8,
-    marginBottom: spacing.md,
+    marginBottom: spacing.spacingMd,
     fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralDark,
+    fontSize: typography.body.fontSize,
+    color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: colors.neutralLight,
+    borderColor: colors.borderNeutral,
   },
   registerText: {
-    marginTop: spacing.md,
+    marginTop: spacing.spacingMd,
     fontFamily: typography.fontFamily.interMedium,
-    fontSize: typography.sizes.body,
-    color: colors.brandPrimary,
+    fontSize: typography.body.fontSize,
+    color: colors.brandPurpleDark,
   },
 });
 

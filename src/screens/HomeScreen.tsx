@@ -4,6 +4,7 @@ import { MOCK_PRODUCTS, MOCK_CATEGORIES } from "../utils/mockData";
 import ProductCard from "../components/product/ProductCard";
 import SearchBar from "../components/common/SearchBar";
 import Carousel from "../components/common/Carousel";
+import CategoryCard from "../components/common/CategoryCard"; // New import
 import { spacing } from "../styles/spacing";
 import { typography } from "../styles/typography";
 import { colors } from "../styles/colors";
@@ -11,36 +12,60 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/RootNavigator";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Product } from "../types/Product";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // Import for category icons
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ProductDetail'>;
 
 const HomeScreen = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedCondition, setSelectedCondition] = useState<"All" | "New" | "Used">("All");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // New state for selected category
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
   const filteredProducts = MOCK_PRODUCTS.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchText.toLowerCase());
+    const matchesSearch = searchText ? product.name.toLowerCase().includes(searchText.toLowerCase()) : true;
     const matchesCondition = selectedCondition === "All" || product.condition === selectedCondition;
-    return matchesSearch && matchesCondition;
+    const matchesCategory = selectedCategory === null || product.category === selectedCategory;
+    return matchesSearch && matchesCondition && matchesCategory;
   });
 
   const carouselData = [
-    { id: "1", imageUrl: "https://via.placeholder.com/800x400/2D6A4F/FFFFFF?text=Summer+Sale" },
-    { id: "2", imageUrl: "https://via.placeholder.com/800x400/F7B801/FFFFFF?text=New+Arrivals" },
-    { id: "3", imageUrl: "https://via.placeholder.com/800x400/10B981/FFFFFF?text=Limited+Time+Offers" },
+    { id: "1", imageUrl: "https://via.placeholder.com/800x400/6A11CB/FFFFFF?text=Summer+Sale" }, // Updated color
+    { id: "2", imageUrl: "https://via.placeholder.com/800x400/480ca8/FFFFFF?text=New+Arrivals" }, // Updated color
+    { id: "3", imageUrl: "https://via.placeholder.com/800x400/10B981/FFFFFF?text=Limited+Time+Offers" }, // Updated color
   ];
+
+  // Mapping for category icons
+  const categoryIcons: { [key: string]: keyof typeof MaterialCommunityIcons.glyphMap } = {
+    "Electronics": "laptop",
+    "Fashion": "hanger",
+    "Home & Kitchen": "home-outline",
+    "Books": "book-open-outline",
+    "Sports": "volleyball",
+    "Vehicles": "car",
+    "Collectibles": "treasure-chest",
+    "Art": "palette",
+    "Toys": "toy-brick",
+    "Music": "music",
+    "Health & Beauty": "face-woman-shimmer",
+    "Garden": "flower",
+    "Pet Supplies": "paw",
+    "Baby": "baby-carriage",
+    "Jewelry": "diamond-stone",
+    "Crafts": "brush",
+    "Food": "food-apple",
+    "Services": "account-group",
+    "Other": "shape-outline",
+  };
 
   const ListHeader = () => (
     <View>
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <Text style={styles.headerText}>Discover</Text>
-        </View>
+      <View style={styles.searchBlockContainer}>
+        <Text style={styles.searchBlockTitle}>PESQUISAR</Text>
         <SearchBar
           value={searchText}
           onChangeText={setSearchText}
-          placeholder="Search products..."
+          placeholder="Escreva algo..."
         />
       </View>
 
@@ -54,9 +79,12 @@ const HomeScreen = () => {
           data={MOCK_CATEGORIES}
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.categoryButton}>
-              <Text style={styles.categoryButtonText}>{item}</Text>
-            </TouchableOpacity>
+            <CategoryCard
+              categoryName={item}
+              iconName={categoryIcons[item] || "shape-outline"}
+              onPress={() => setSelectedCategory(item === selectedCategory ? null : item)}
+              isActive={item === selectedCategory}
+            />
           )}
           contentContainerStyle={styles.categoryList}
         />
@@ -150,61 +178,39 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundPrimary,
+    backgroundColor: colors.backgroundLight, // Updated background color
   },
-  header: {
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.xl, // Adjusted for better visual balance
-    paddingBottom: spacing.md,
-    backgroundColor: colors.backgroundPrimary, // Use primary background for header area
+  searchBlockContainer: {
+    backgroundColor: colors.brandPurpleDark,
+    padding: spacing.spacingLg,
+    borderRadius: 16,
+    marginTop: spacing.spacingMd, // Adjusted margin top
+    marginHorizontal: spacing.spacingMd, // Added horizontal margin
   },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-  },
-  headerText: {
-    fontFamily: typography.fontFamily.interBold,
-    fontSize: typography.sizes.display, // Use Display size for main title
-    color: colors.neutralDark,
+  searchBlockTitle: {
+    ...typography.heading2, // Using Heading 2 style
+    color: colors.surfaceWhite,
+    marginBottom: spacing.spacingMd,
   },
   section: {
-    padding: spacing.md,
+    paddingHorizontal: spacing.spacingMd, // Changed to horizontal padding
+    paddingVertical: spacing.spacingMd, // Added vertical padding
   },
   sectionTitle: {
-    fontFamily: typography.fontFamily.interSemiBold,
-    fontSize: typography.sizes.heading2,
-    color: colors.neutralDark,
-    marginBottom: spacing.md,
+    ...typography.heading2, // Using Heading 2 style
+    color: colors.textPrimary, // Updated text color
+    marginBottom: spacing.spacingMd,
   },
   categoryList: {
-    paddingBottom: spacing.sm,
-  },
-  categoryButton: {
-    backgroundColor: colors.surfaceWhite,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: 10, // Smaller border radius for category buttons
-    marginRight: spacing.sm,
-    shadowColor: colors.neutralDark, // Apply shadow for card-like appearance
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 2, // For Android shadow
-  },
-  categoryButtonText: {
-    fontFamily: typography.fontFamily.interMedium,
-    fontSize: typography.sizes.body,
-    color: colors.neutralDark,
+    paddingBottom: spacing.spacingSm,
   },
   conditionFilterContainer: {
     flexDirection: "row",
-    marginBottom: spacing.md,
+    marginBottom: spacing.spacingMd,
     backgroundColor: colors.surfaceWhite, // Container for condition buttons
     borderRadius: 12,
     padding: spacing.xs, // Small padding inside the container
-    shadowColor: colors.neutralDark,
+    shadowColor: colors.textPrimary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 5,
@@ -212,36 +218,35 @@ const styles = StyleSheet.create({
   },
   conditionButton: {
     flex: 1, // Distribute space evenly
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.spacingSm,
+    paddingHorizontal: spacing.spacingMd,
     borderRadius: 8, // Button specific border radius
     alignItems: 'center',
     justifyContent: 'center',
   },
   selectedConditionButton: {
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.brandPurpleVibrant, // Updated color
   },
   conditionButtonText: {
-    fontFamily: typography.fontFamily.interSemiBold, // Semibold for button text
-    fontSize: typography.sizes.body,
-    color: colors.neutralMedium, // Default text color for inactive buttons
+    ...typography.body, // Using body style
+    color: colors.textSecondary, // Default text color for inactive buttons
   },
   selectedConditionButtonText: {
     color: colors.surfaceWhite,
   },
   productList: {
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.spacingMd,
+    paddingBottom: spacing.spacingMd,
   },
   productGrid: {
     justifyContent: "space-between",
-    marginHorizontal: -spacing.sm, // Counteract item margin
-    marginBottom: spacing.md,
+    marginHorizontal: -spacing.spacingSm, // Counteract item margin
+    marginBottom: spacing.spacingMd,
   },
   productItem: {
     flex: 1,
-    marginHorizontal: spacing.sm,
-    marginBottom: spacing.md,
+    marginHorizontal: spacing.spacingSm,
+    marginBottom: spacing.spacingMd,
   },
 });
 

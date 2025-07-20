@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "../../styles/colors";
@@ -18,20 +18,31 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onChangeText,
   onSearch,
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          borderColor: isFocused ? colors.brandPurpleVibrant : colors.borderNeutral,
+        },
+      ]}
+    >
       <MaterialCommunityIcons
         name="magnify"
         size={20}
-        color={colors.neutralMedium}
+        color={colors.textSecondary}
         style={styles.icon}
       />
       <TextInput
         style={styles.input}
         placeholder={placeholder}
-        placeholderTextColor={colors.neutralMedium}
+        placeholderTextColor={colors.textSecondary}
         value={value}
         onChangeText={onChangeText}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         onSubmitEditing={onSearch}
         returnKeyType="search"
       />
@@ -43,21 +54,20 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.backgroundPrimary,
+    backgroundColor: colors.surfaceWhite, // Changed background color
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.neutralLight,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.spacingSm,
     paddingVertical: spacing.xs,
   },
   icon: {
-    marginRight: spacing.sm,
+    marginRight: spacing.spacingSm,
   },
   input: {
     flex: 1,
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralDark,
+    fontFamily: typography.body.fontFamily,
+    fontSize: typography.body.fontSize,
+    color: colors.textPrimary,
     paddingVertical: 0, // Remove default vertical padding
   },
 });

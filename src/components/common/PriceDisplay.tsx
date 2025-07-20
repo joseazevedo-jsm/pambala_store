@@ -33,13 +33,13 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({
 const styles = StyleSheet.create({
   price: {
     fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.bodyLarge,
-    color: colors.brandPrimary,
+    fontSize: typography.body.fontSize,
+    color: colors.brandPurpleVibrant,
   },
   originalPrice: {
     fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralMedium,
+    fontSize: typography.body.fontSize,
+    color: colors.textSecondary,
     textDecorationLine: "line-through",
     marginLeft: 8, // Adjust as needed
   },

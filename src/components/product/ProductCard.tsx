@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { colors } from "../../styles/colors";
 import { typography } from "../../styles/typography";
 import { spacing } from "../../styles/spacing";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // Import MaterialCommunityIcons
 
 interface ProductCardProps {
   imageUrl: string;
@@ -10,6 +11,8 @@ interface ProductCardProps {
   price: number;
   originalPrice?: number;
   onPress: () => void;
+  isSaved?: boolean; // New prop for saved state
+  onToggleSave?: () => void; // New prop for toggling save
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -18,16 +21,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
   price,
   originalPrice,
   onPress,
+  isSaved = false, // Default to not saved
+  onToggleSave,
 }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: imageUrl }} style={styles.image} />
+        <TouchableOpacity style={styles.heartIconContainer} onPress={onToggleSave}>
+          <MaterialCommunityIcons
+            name={isSaved ? "heart" : "heart-outline"}
+            size={24}
+            color={isSaved ? colors.brandPurpleVibrant : colors.surfaceWhite} // Color based on saved state
+          />
+        </TouchableOpacity>
+      </View>
       <View style={styles.infoContainer}>
-        <Text style={styles.name}>{name}</Text>
+        <Text style={typography.productTitle}>{name}</Text>
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>${price.toFixed(2)}</Text>
+          <Text style={[typography.body, styles.priceText]}>${price.toFixed(2)}</Text>
           {originalPrice && (
-            <Text style={styles.originalPrice}>
+            <Text style={[typography.body, styles.originalPriceText]}>
               ${originalPrice.toFixed(2)}
             </Text>
           )}
@@ -40,43 +54,50 @@ const ProductCard: React.FC<ProductCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surfaceWhite,
-    borderRadius: 12,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 15,
-    padding: spacing.md,
-    marginBottom: spacing.md,
+    borderRadius: 16, // Updated from 12 to 16
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 }, // Subtle shadow
+    shadowOpacity: 0.1, // Subtle shadow
+    shadowRadius: 4, // Subtle shadow
+    // Removed padding from here, moved to infoContainer
+  },
+  imageContainer: {
+    aspectRatio: 1,
+    width: "100%",
+    borderTopLeftRadius: 16, // Match card's border radius
+    borderTopRightRadius: 16, // Match card's border radius
+    overflow: 'hidden', // Clip image to border radius
   },
   image: {
     width: "100%",
-    aspectRatio: 1,
-    borderRadius: 8,
+    height: "100%",
+  },
+  heartIconContainer: {
+    position: 'absolute',
+    top: spacing.spacingSm, // 8px from top
+    right: spacing.spacingSm, // 8px from right
+    backgroundColor: 'rgba(255,255,255,0.7)', // Subtle circular background
+    borderRadius: 20, // Make it circular
+    padding: spacing.xs, // Small padding for touch area
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   infoContainer: {
-    marginTop: spacing.sm,
-  },
-  name: {
-    fontFamily: typography.fontFamily.interSemiBold,
-    fontSize: typography.sizes.productTitle,
-    color: colors.neutralDark,
+    padding: spacing.spacingMd, // Added padding here
   },
   priceContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: spacing.xs,
   },
-  price: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.bodyLarge,
-    color: colors.brandPrimary,
+  priceText: {
+    color: colors.textPrimary, // Using textPrimary for price
+    fontWeight: 'bold', // Explicitly bold for price
   },
-  originalPrice: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralMedium,
+  originalPriceText: {
+    color: colors.textSecondary,
     textDecorationLine: "line-through",
-    marginLeft: spacing.sm,
+    marginLeft: spacing.spacingSm,
   },
 });
 

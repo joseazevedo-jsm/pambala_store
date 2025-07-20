@@ -16,7 +16,7 @@ const InfoRow: React.FC<InfoRowProps> = ({ iconName, text }) => {
       <MaterialCommunityIcons
         name={iconName}
         size={20}
-        color={colors.neutralDark}
+        color={colors.textPrimary} // Updated to textPrimary
         style={styles.icon}
       />
       <Text style={styles.text}>{text}</Text>
@@ -28,15 +28,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: spacing.md,
+    marginBottom: spacing.spacingMd, // Updated spacing
   },
   icon: {
-    marginRight: spacing.sm,
+    marginRight: spacing.spacingSm, // Updated spacing
   },
   text: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.sizes.body,
-    color: colors.neutralDark,
+    ...typography.body, // Using typography.body directly
+    color: colors.textPrimary, // Updated to textPrimary
   },
 });
 
