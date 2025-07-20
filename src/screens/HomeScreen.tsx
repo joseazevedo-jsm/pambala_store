@@ -17,16 +17,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"; // Import for categ
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ProductDetail'>;
 
 const HomeScreen = () => {
-  const [searchText, setSearchText] = useState("");
   const [selectedCondition, setSelectedCondition] = useState<"All" | "New" | "Used">("All");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // New state for selected category
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
-  const filteredProducts = MOCK_PRODUCTS.filter((product) => {
-    const matchesSearch = searchText ? product.name.toLowerCase().includes(searchText.toLowerCase()) : true;
-    const matchesCondition = selectedCondition === "All" || product.condition === selectedCondition;
-    const matchesCategory = selectedCategory === null || product.category === selectedCategory;
-    return matchesSearch && matchesCondition && matchesCategory;
+  const allProducts = MOCK_PRODUCTS; // Display all products by default
+
+  const filteredProducts = allProducts.filter(product => {
+    const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
+    const matchesCondition = selectedCondition === "All" ? true : product.condition === selectedCondition;
+    return matchesCategory && matchesCondition;
   });
 
   const carouselData = [
@@ -61,22 +61,16 @@ const HomeScreen = () => {
   const ListHeader = () => (
     <View>
       <View style={styles.headerContainer}>
-        <TouchableOpacity style={styles.headerIconContainer} onPress={() => {/* Open menu */}} accessibilityLabel="Open menu">
-          <MaterialCommunityIcons name="menu" size={24} color={colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={styles.logoText}>Pambala</Text> {/* Placeholder for Logo */}
-        <TouchableOpacity style={styles.headerIconContainer} onPress={() => navigation.navigate("Cart")} accessibilityLabel="Go to cart">
-          <MaterialCommunityIcons name="cart-outline" size={24} color={colors.textPrimary} />
-        </TouchableOpacity>
+        <Text style={styles.logoText}>Pambala</Text> {/* Logo on the left */}
+        <View style={styles.rightIconsContainer}> {/* Container for right-aligned icons */}
+          <TouchableOpacity style={styles.headerIconContainer} onPress={() => navigation.navigate("Search")} accessibilityLabel="Search products">
+            <MaterialCommunityIcons name="magnify" size={24} color={colors.textPrimary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerIconContainer} onPress={() => navigation.navigate("Cart")} accessibilityLabel="Go to cart">
+            <MaterialCommunityIcons name="cart-outline" size={24} color={colors.textPrimary} />
+          </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity style={styles.compactSearchBar} onPress={() => navigation.navigate("Search")} accessibilityLabel="Search products">
-        <SearchBar
-          value={searchText}
-          onChangeText={setSearchText}
-          placeholder="Escreva algo..."
-          editable={false} // Make it non-editable as it navigates to SearchScreen
-        />
-      </TouchableOpacity>
 
       {/* Carousel - make it full width by using negative margins to offset parent padding */}
       <View style={styles.carouselWrapper}>
@@ -197,11 +191,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.spacingMd,
-    paddingVertical: spacing.spacingSm,
+    paddingVertical: spacing.spacingSm, // Increased vertical padding for a taller header
     backgroundColor: colors.surfaceWhite,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderNeutral,
+    borderRadius: 12, // Added border radius
+    shadowColor: "#000", // Added shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // For Android shadow
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) : 0,
+    marginHorizontal: spacing.xs, // Reduced horizontal margin for a wider header
+    marginTop: spacing.spacingMd, // Added top margin
   },
   headerIconContainer: {
     padding: 10, // Ensures 44x44px touch target
@@ -210,9 +210,9 @@ const styles = StyleSheet.create({
     ...typography.heading1, // Using Heading 1 for logo text
     color: colors.brandPurpleDark, // Example color for logo
   },
-  compactSearchBar: {
-    marginHorizontal: spacing.spacingMd,
-    marginTop: spacing.spacingMd,
+  rightIconsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   carouselStyle: {
     // Remove marginTop if not needed, or keep if you want vertical spacing
