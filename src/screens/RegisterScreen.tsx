@@ -36,7 +36,7 @@ const RegisterScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Email"
-        placeholderTextColor={colors.neutralMedium}
+        placeholderTextColor={colors.borderNeutral}
         keyboardType="email-address"
         autoCapitalize="none"
         value={email}
@@ -45,7 +45,7 @@ const RegisterScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Password"
-        placeholderTextColor={colors.neutralMedium}
+        placeholderTextColor={colors.borderNeutral}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -53,7 +53,7 @@ const RegisterScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
-        placeholderTextColor={colors.neutralMedium}
+        placeholderTextColor={colors.borderNeutral}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.spacingMd,
     fontFamily: typography.fontFamily.interMedium,
     fontSize: typography.body.fontSize,
-    color: colors.brandPurpleDark,
+    color: colors.brandPurpleVibrant,
   },
 });
 

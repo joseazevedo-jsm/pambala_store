@@ -22,7 +22,7 @@ const RootNavigator = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   return (
-    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+    <RootStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
       {isAuthenticated ? (
         <>
           <RootStack.Screen name="TabNavigator" component={TabNavigator} />

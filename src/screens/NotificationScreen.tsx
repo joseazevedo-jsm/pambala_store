@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, SafeAreaView, Platform } from "react-native";
 import { colors } from "../styles/colors";
 import { typography } from "../styles/typography";
 import { spacing } from "../styles/spacing";
@@ -45,31 +45,41 @@ const NotificationScreen = () => {
     </View>
   );
 
+  const renderHeader = () => (
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>Alertas</Text>
+    </View>
+  );
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerTitle}>Notifications</Text>
+    <SafeAreaView style={styles.safeArea}>
       <FlatList
         data={MOCK_NOTIFICATIONS}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
         renderItem={renderNotification}
         contentContainerStyle={styles.listContent}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: colors.backgroundLight,
-    paddingTop: spacing.spacingXl * 2, // Adjust for status bar
+  },
+  header: {
+    paddingHorizontal: spacing.spacingMd,
+    paddingVertical: spacing.spacingSm,
+    backgroundColor: colors.surfaceWhite,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderNeutral,
+    marginBottom: spacing.spacingMd,
   },
   headerTitle: {
-    fontFamily: typography.fontFamily.interBold,
-    fontSize: typography.heading1.fontSize,
+    ...typography.heading1,
     color: colors.textPrimary,
-    paddingHorizontal: spacing.spacingMd,
-    marginBottom: spacing.spacingMd,
   },
   listContent: {
     paddingHorizontal: spacing.spacingMd,
@@ -82,8 +92,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.spacingMd,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   read: {
     opacity: 0.7,
@@ -93,20 +103,17 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.brandPurpleVibrant,
   },
   notificationTitle: {
-    fontFamily: typography.fontFamily.interSemiBold,
-    fontSize: typography.body.fontSize, // No bodyLarge, using body
+    ...typography.body,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   notificationMessage: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.body.fontSize,
+    ...typography.body,
     color: colors.textSecondary,
     marginBottom: spacing.xs,
   },
   notificationTimestamp: {
-    fontFamily: typography.fontFamily.interRegular,
-    fontSize: typography.label.fontSize,
+    ...typography.label,
     color: colors.textSecondary,
     textAlign: "right",
   },

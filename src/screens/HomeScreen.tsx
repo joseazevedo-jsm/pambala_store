@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, FlatList, ScrollView, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES } from "../utils/mockData";
 import ProductCard from "../components/product/ProductCard";
 import SearchBar from "../components/common/SearchBar";
@@ -30,9 +30,9 @@ const HomeScreen = () => {
   });
 
   const carouselData = [
-    { id: "1", imageUrl: "https://via.placeholder.com/800x400/6A11CB/FFFFFF?text=Summer+Sale" }, // Updated color
-    { id: "2", imageUrl: "https://via.placeholder.com/800x400/480ca8/FFFFFF?text=New+Arrivals" }, // Updated color
-    { id: "3", imageUrl: "https://via.placeholder.com/800x400/10B981/FFFFFF?text=Limited+Time+Offers" }, // Updated color
+    { id: "1", imageUrl: "https://via.placeholder.com/800x400/6A11CB/FFFFFF?text=Summer+Sale", title: "Summer Sale!" },
+    { id: "2", imageUrl: "https://via.placeholder.com/800x400/480ca8/FFFFFF?text=New+Arrivals", title: "New Arrivals" },
+    { id: "3", imageUrl: "https://via.placeholder.com/800x400/10B981/FFFFFF?text=Limited+Time+Offers", title: "Limited Time Offers" },
   ];
 
   // Mapping for category icons
@@ -60,16 +60,28 @@ const HomeScreen = () => {
 
   const ListHeader = () => (
     <View>
-      <View style={styles.searchBlockContainer}>
-        <Text style={styles.searchBlockTitle}>PESQUISAR</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity style={styles.headerIconContainer} onPress={() => {/* Open menu */}} accessibilityLabel="Open menu">
+          <MaterialCommunityIcons name="menu" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.logoText}>Pambala</Text> {/* Placeholder for Logo */}
+        <TouchableOpacity style={styles.headerIconContainer} onPress={() => navigation.navigate("Cart")} accessibilityLabel="Go to cart">
+          <MaterialCommunityIcons name="cart-outline" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity style={styles.compactSearchBar} onPress={() => navigation.navigate("Search")} accessibilityLabel="Search products">
         <SearchBar
           value={searchText}
           onChangeText={setSearchText}
           placeholder="Escreva algo..."
+          editable={false} // Make it non-editable as it navigates to SearchScreen
         />
-      </View>
+      </TouchableOpacity>
 
-      <Carousel data={carouselData} autoplay />
+      {/* Carousel - make it full width by using negative margins to offset parent padding */}
+      <View style={styles.carouselWrapper}>
+        <Carousel data={carouselData} autoplay style={styles.carouselStyle} />
+      </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Categories</Text>
@@ -178,27 +190,44 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundLight, // Updated background color
+    backgroundColor: colors.backgroundLight,
   },
-  searchBlockContainer: {
-    backgroundColor: colors.brandPurpleDark,
-    padding: spacing.spacingLg,
-    borderRadius: 16,
-    marginTop: spacing.spacingMd, // Adjusted margin top
-    marginHorizontal: spacing.spacingMd, // Added horizontal margin
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.spacingMd,
+    paddingVertical: spacing.spacingSm,
+    backgroundColor: colors.surfaceWhite,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderNeutral,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) : 0,
   },
-  searchBlockTitle: {
-    ...typography.heading2, // Using Heading 2 style
-    color: colors.surfaceWhite,
-    marginBottom: spacing.spacingMd,
+  headerIconContainer: {
+    padding: 10, // Ensures 44x44px touch target
+  },
+  logoText: {
+    ...typography.heading1, // Using Heading 1 for logo text
+    color: colors.brandPurpleDark, // Example color for logo
+  },
+  compactSearchBar: {
+    marginHorizontal: spacing.spacingMd,
+    marginTop: spacing.spacingMd,
+  },
+  carouselStyle: {
+    // Remove marginTop if not needed, or keep if you want vertical spacing
+    marginTop: spacing.spacingLg,
+  },
+  carouselWrapper: {
+    marginHorizontal: -spacing.spacingMd, // Counteract parent horizontal padding
   },
   section: {
-    paddingHorizontal: spacing.spacingMd, // Changed to horizontal padding
-    paddingVertical: spacing.spacingMd, // Added vertical padding
+    paddingHorizontal: spacing.spacingMd,
+    paddingVertical: spacing.spacingMd,
   },
   sectionTitle: {
-    ...typography.heading2, // Using Heading 2 style
-    color: colors.textPrimary, // Updated text color
+    ...typography.heading2,
+    color: colors.textPrimary,
     marginBottom: spacing.spacingMd,
   },
   categoryList: {
@@ -207,9 +236,9 @@ const styles = StyleSheet.create({
   conditionFilterContainer: {
     flexDirection: "row",
     marginBottom: spacing.spacingMd,
-    backgroundColor: colors.surfaceWhite, // Container for condition buttons
+    backgroundColor: colors.surfaceWhite,
     borderRadius: 12,
-    padding: spacing.xs, // Small padding inside the container
+    padding: spacing.xs,
     shadowColor: colors.textPrimary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -217,19 +246,19 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   conditionButton: {
-    flex: 1, // Distribute space evenly
-    paddingVertical: spacing.spacingSm,
+    flex: 1,
+    paddingVertical: spacing.spacingMd,
     paddingHorizontal: spacing.spacingMd,
-    borderRadius: 8, // Button specific border radius
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
   selectedConditionButton: {
-    backgroundColor: colors.brandPurpleVibrant, // Updated color
+    backgroundColor: colors.brandPurpleVibrant,
   },
   conditionButtonText: {
-    ...typography.body, // Using body style
-    color: colors.textSecondary, // Default text color for inactive buttons
+    ...typography.body,
+    color: colors.textSecondary,
   },
   selectedConditionButtonText: {
     color: colors.surfaceWhite,
@@ -237,10 +266,11 @@ const styles = StyleSheet.create({
   productList: {
     paddingHorizontal: spacing.spacingMd,
     paddingBottom: spacing.spacingMd,
+    paddingTop: spacing.spacingXl * 2, // Adjust based on header height
   },
   productGrid: {
     justifyContent: "space-between",
-    marginHorizontal: -spacing.spacingSm, // Counteract item margin
+    marginHorizontal: -spacing.spacingSm,
     marginBottom: spacing.spacingMd,
   },
   productItem: {

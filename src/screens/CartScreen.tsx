@@ -49,7 +49,7 @@ const CartScreen = () => {
         <Button
           title="Explorar Produtos"
           onPress={() => navigation.navigate("HomeTab")}
-          variant="primary"
+          variant="secondary"
           style={styles.exploreButton}
         />
       </View>
@@ -69,14 +69,14 @@ const CartScreen = () => {
               <Text style={styles.itemName}>{item.name}</Text>
               <PriceDisplay price={item.price} style={styles.itemPrice} />
               <View style={styles.quantityControl}>
-                <TouchableOpacity onPress={() => handleUpdateQuantity(item.id, item.quantity - 1)}>
+                <TouchableOpacity onPress={() => handleUpdateQuantity(item.id, item.quantity - 1)} style={styles.iconButton} accessibilityLabel={`Decrease quantity of ${item.name}`}>
                   <MaterialCommunityIcons name="minus-circle-outline" size={24} color={colors.textSecondary} />
                 </TouchableOpacity>
                 <Text style={styles.itemQuantity}>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => handleUpdateQuantity(item.id, item.quantity + 1)}>
+                <TouchableOpacity onPress={() => handleUpdateQuantity(item.id, item.quantity + 1)} style={styles.iconButton} accessibilityLabel={`Increase quantity of ${item.name}`}>
                   <MaterialCommunityIcons name="plus-circle-outline" size={24} color={colors.textSecondary} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleRemoveItem(item.id)} style={styles.removeButton}>
+                <TouchableOpacity onPress={() => handleRemoveItem(item.id)} style={[styles.removeButton, styles.iconButton]} accessibilityLabel={`Remove ${item.name} from cart`}>
                   <MaterialCommunityIcons name="delete-outline" size={24} color={colors.feedbackError} />
                 </TouchableOpacity>
               </View>
@@ -192,6 +192,9 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     marginLeft: "auto",
+  },
+  iconButton: {
+    padding: 10, // Ensures a minimum touch target of 44x44px for a 24px icon
   },
   summaryContainer: {
     backgroundColor: colors.surfaceWhite,

@@ -38,7 +38,7 @@ const CheckoutScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton} accessibilityLabel="Go back">
           <MaterialCommunityIcons name="arrow-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Checkout</Text>
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? spacing.spacingMd : spacing.spacingSm, // Example adjustment
   },
   backButton: {
-    padding: spacing.xs,
+    padding: 10, // Ensures a minimum touch target of 44x44px for a 24px icon
   },
   headerTitle: {
     ...typography.heading1,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.borderNeutral,
   },
   stepTitle: {
-    ...typography.heading1,
+    ...typography.heading2,
     color: colors.textPrimary,
     textAlign: "center",
     marginTop: spacing.spacingMd,

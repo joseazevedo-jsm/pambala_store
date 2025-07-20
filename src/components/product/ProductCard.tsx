@@ -3,7 +3,8 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { colors } from "../../styles/colors";
 import { typography } from "../../styles/typography";
 import { spacing } from "../../styles/spacing";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Import MaterialCommunityIcons
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Animated, { useSharedValue, withSpring, useAnimatedStyle } from "react-native-reanimated";
 
 interface ProductCardProps {
   imageUrl: string;
@@ -24,16 +25,37 @@ const ProductCard: React.FC<ProductCardProps> = ({
   isSaved = false, // Default to not saved
   onToggleSave,
 }) => {
+  const heartScale = useSharedValue(1);
+
+  const handleToggleSaveAnimation = () => {
+    if (onToggleSave) {
+      onToggleSave();
+      heartScale.value = withSpring(1.2, {}, (finished) => {
+        if (finished) {
+          heartScale.value = withSpring(1);
+        }
+      });
+    }
+  };
+
+  const animatedHeartStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: heartScale.value }],
+    };
+  });
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: imageUrl }} style={styles.image} />
-        <TouchableOpacity style={styles.heartIconContainer} onPress={onToggleSave}>
-          <MaterialCommunityIcons
-            name={isSaved ? "heart" : "heart-outline"}
-            size={24}
-            color={isSaved ? colors.brandPurpleVibrant : colors.surfaceWhite} // Color based on saved state
-          />
+        <TouchableOpacity style={styles.heartIconContainer} onPress={handleToggleSaveAnimation}>
+          <Animated.View style={animatedHeartStyle}>
+            <MaterialCommunityIcons
+              name={isSaved ? "heart" : "heart-outline"}
+              size={24}
+              color={isSaved ? colors.brandPurpleVibrant : colors.surfaceWhite} // Color based on saved state
+            />
+          </Animated.View>
         </TouchableOpacity>
       </View>
       <View style={styles.infoContainer}>
@@ -78,7 +100,7 @@ const styles = StyleSheet.create({
     right: spacing.spacingSm, // 8px from right
     backgroundColor: 'rgba(255,255,255,0.7)', // Subtle circular background
     borderRadius: 20, // Make it circular
-    padding: spacing.xs, // Small padding for touch area
+    padding: 10, // Increased padding for 44x44px touch area
     justifyContent: 'center',
     alignItems: 'center',
   },

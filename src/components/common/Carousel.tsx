@@ -1,20 +1,23 @@
 import React, { useRef, useState } from "react";
-import { View, FlatList, Image, StyleSheet, Dimensions, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
+import { View, FlatList, Image, StyleSheet, Dimensions, NativeScrollEvent, NativeSyntheticEvent, Text } from "react-native";
 import { colors } from "../../styles/colors";
 import { spacing } from "../../styles/spacing";
+import { typography } from "../../styles/typography";
 
 const { width: screenWidth } = Dimensions.get("window");
 
 interface CarouselProps {
-  data: { id: string; imageUrl: string }[];
+  data: { id: string; imageUrl: string; title?: string; }[]; // Added optional title
   autoplay?: boolean;
   autoplayInterval?: number;
+  style?: any; // Allow style prop
 }
 
 const Carousel: React.FC<CarouselProps> = ({
   data,
   autoplay = false,
   autoplayInterval = 3000,
+  style, // Accept style prop
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
@@ -37,15 +40,28 @@ const Carousel: React.FC<CarouselProps> = ({
     return () => clearInterval(interval);
   }, [activeIndex, autoplay, autoplayInterval, data.length]);
 
-  const renderItem = ({ item }: { item: { id: string; imageUrl: string } }) => (
+  const renderItem = ({ item }: { item: { id: string; imageUrl: string; title?: string; } }) => (
     <View style={styles.slide}>
       <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      {item.title && (
+        <View style={styles.overlay}>
+          <Text style={styles.titleText}>{item.title}</Text>
+        </View>
+      )}
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}> {/* Merge styles */}
       <FlatList
+        contentContainerStyle={[
+          { flexGrow: 1 },
+          style && (style.paddingHorizontal || style.marginHorizontal)
+            ? {
+                paddingHorizontal: style.paddingHorizontal || style.marginHorizontal || 0,
+              }
+            : null,
+        ]}
         ref={flatListRef}
         data={data}
         renderItem={renderItem}
@@ -75,6 +91,8 @@ const styles = StyleSheet.create({
   container: {
     width: screenWidth,
     height: screenWidth * 0.6, // Adjust height as needed
+    borderRadius: 16, // Applied border radius
+    overflow: 'hidden', // Ensure content respects border radius
   },
   slide: {
     width: screenWidth,
@@ -86,10 +104,26 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "cover",
   },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)', // Semi-transparent overlay
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.spacingMd,
+  },
+  titleText: {
+    ...typography.display,
+    color: colors.surfaceWhite,
+    textAlign: 'center',
+  },
   pagination: {
     flexDirection: "row",
     position: "absolute",
-    bottom: spacing.sm,
+    bottom: spacing.spacingSm, // Updated spacing
     alignSelf: "center",
   },
   dot: {
@@ -99,10 +133,10 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.xs,
   },
   activeDot: {
-    backgroundColor: colors.brandPrimary,
+    backgroundColor: colors.brandPurpleVibrant, // Updated color
   },
   inactiveDot: {
-    backgroundColor: colors.neutralLight,
+    backgroundColor: colors.borderNeutral, // Updated color
   },
 });
 

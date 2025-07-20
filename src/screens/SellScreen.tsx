@@ -121,7 +121,7 @@ const SellScreen = () => {
         </View>
 
         <Text style={styles.label}>Product Images</Text>
-        <TouchableOpacity style={styles.imagePicker}>
+        <TouchableOpacity style={styles.imagePicker} accessibilityLabel="Add product images">
           <MaterialCommunityIcons name="camera-plus-outline" size={40} color={colors.textSecondary} />
           <Text style={styles.imagePickerText}>Add Images</Text>
         </TouchableOpacity>
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   conditionButton: {
     backgroundColor: colors.surfaceWhite,
-    paddingVertical: spacing.spacingSm,
+    paddingVertical: spacing.spacingSm, // Ensures a sufficient touch target
     paddingHorizontal: spacing.spacingMd,
     borderRadius: 20,
     marginRight: spacing.spacingSm,

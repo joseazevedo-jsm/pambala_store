@@ -29,6 +29,7 @@ const ProductDetailScreen = () => {
 
   const [showAddedToCartMessage, setShowAddedToCartMessage] = useState(false);
   const buttonScale = useSharedValue(1);
+  const messageOpacity = useSharedValue(0); // New shared value for message opacity
 
   const product = MOCK_PRODUCTS.find((p) => p.id === productId);
 
@@ -48,13 +49,16 @@ const ProductDetailScreen = () => {
 
   const handleAddToCart = () => {
     dispatch(addToCart(product));
-    setShowAddedToCartMessage(true);
+    // Animation for button scale
     buttonScale.value = withTiming(1.05, { duration: 100, easing: Easing.ease }, () => {
       buttonScale.value = withTiming(1, { duration: 100, easing: Easing.ease });
     });
-    setTimeout(() => {
-      setShowAddedToCartMessage(false);
-    }, 1500);
+    // Animation for message opacity
+    messageOpacity.value = withTiming(1, { duration: 300 }, () => {
+      setTimeout(() => {
+        messageOpacity.value = withTiming(0, { duration: 500 });
+      }, 1000); // Message visible for 1 second
+    });
   };
 
   const handleToggleWishlist = () => {
@@ -76,14 +80,20 @@ const ProductDetailScreen = () => {
     };
   });
 
+  const animatedMessageStyle = useAnimatedStyle(() => {
+    return {
+      opacity: messageOpacity.value,
+    };
+  });
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIcon}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIcon} accessibilityLabel="Go back to previous screen">
           <MaterialCommunityIcons name="arrow-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>{product.name}</Text>
-        <TouchableOpacity onPress={handleToggleWishlist} style={styles.headerIcon}>
+        <TouchableOpacity onPress={handleToggleWishlist} style={styles.headerIcon} accessibilityLabel={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}>
           <MaterialCommunityIcons
             name={isInWishlist ? "heart" : "heart-outline"}
             size={24}
@@ -132,9 +142,7 @@ const ProductDetailScreen = () => {
           style={styles.actionButton}
         />
       </View>
-      {showAddedToCartMessage && (
-        <Text style={styles.addedToCartMessage}>Item added to cart!</Text>
-      )}
+      <Animated.Text style={[styles.addedToCartMessage, animatedMessageStyle]}>Item added to cart!</Animated.Text>
     </SafeAreaView>
   );
 };
@@ -168,7 +176,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.borderNeutral,
   },
   headerIcon: {
-    padding: spacing.xs, // Increase touch target
+    padding: 10, // Ensures a minimum touch target of 44x44px for a 24px icon
   },
   headerTitle: {
     ...typography.heading2,
