@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import SearchScreen from "../screens/SearchScreen";
 import CartScreen from "../screens/CartScreen";
+import NotificationScreen from "../screens/NotificationScreen";
 
 export type RootStackParamList = {
   TabNavigator: undefined;
@@ -32,6 +33,7 @@ const RootNavigator = () => {
           <RootStack.Screen name="Checkout" component={CheckoutScreen} />
           <RootStack.Screen name="Search" component={SearchScreen} />
           <RootStack.Screen name="Cart" component={CartScreen} />
+          <RootStack.Screen name="Notification" component={NotificationScreen} />
         </>
       ) : (
         <>

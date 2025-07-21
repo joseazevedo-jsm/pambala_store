@@ -9,7 +9,7 @@ import AccountScreen from "../screens/AccountScreen";
 import TabIcon from "../components/navigation/TabIcon";
 import { colors } from "../styles/colors";
 import { Platform } from "react-native";
-import NotificationScreen from '../screens/NotificationScreen';
+import CartScreen from '../screens/CartScreen';
 import { typography } from "../styles/typography";
 
 const Tab = createBottomTabNavigator();
@@ -82,12 +82,12 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="NotificationTab"
-        component={NotificationScreen}
+        name="CartTab"
+        component={CartScreen}
         options={{
-          title: "Alerts", // Changed to "Alerts"
+          title: "Cart",
           tabBarIcon: ({ size, focused }) => (
-            <TabIcon name="bell-outline" size={size} focused={focused} />
+            <TabIcon name="cart-outline" size={size} focused={focused} />
           ),
         }}
       />

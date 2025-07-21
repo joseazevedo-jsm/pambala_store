@@ -66,8 +66,8 @@ const HomeScreen = () => {
           <TouchableOpacity style={styles.headerIconContainer} onPress={() => navigation.navigate("Search")} accessibilityLabel="Search products">
             <MaterialCommunityIcons name="magnify" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIconContainer} onPress={() => navigation.navigate("Cart")} accessibilityLabel="Go to cart">
-            <MaterialCommunityIcons name="cart-outline" size={24} color={colors.textPrimary} />
+          <TouchableOpacity style={styles.headerIconContainer} onPress={() => navigation.navigate("Notification")} accessibilityLabel="View notifications">
+            <MaterialCommunityIcons name="bell-outline" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.spacingMd,
-    paddingVertical: spacing.spacingSm, // Increased vertical padding for a taller header
+    paddingVertical: spacing.xs, // Increased vertical padding for a taller header
     backgroundColor: colors.surfaceWhite,
     borderRadius: 12, // Added border radius
     shadowColor: "#000", // Added shadow

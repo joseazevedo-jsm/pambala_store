@@ -91,8 +91,6 @@ const styles = StyleSheet.create({
   container: {
     width: screenWidth,
     height: screenWidth * 0.6, // Adjust height as needed
-    borderRadius: 16, // Applied border radius
-    overflow: 'hidden', // Ensure content respects border radius
   },
   slide: {
     width: screenWidth,

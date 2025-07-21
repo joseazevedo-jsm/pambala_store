@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.spacingMd,
     fontFamily: typography.fontFamily.interMedium,
     fontSize: typography.body.fontSize,
-    color: colors.brandPurpleVibrant,
+    color: colors.brandPurpleDark,
   },
 });
 

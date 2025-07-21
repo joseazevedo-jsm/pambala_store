@@ -50,7 +50,7 @@ const LoginScreen = () => {
         onChangeText={setPassword}
       />
       <Button title="Login" onPress={handleLogin} />
-      <TouchableOpacity onPress={() => navigation.navigate("Register")} style={styles.linkButton}>
+      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
         <Text style={styles.registerText}>Don't have an account? Register here.</Text>
       </TouchableOpacity>
     </View>
@@ -88,9 +88,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.interMedium,
     fontSize: typography.body.fontSize,
     color: colors.brandPurpleDark,
-  },
-  linkButton: {
-    padding: spacing.xs, // Add padding to increase touch area
   },
 });
 

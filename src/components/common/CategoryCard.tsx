@@ -45,7 +45,9 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    padding: spacing.spacingMd,
+    width: 100, // Fixed width
+    height: 100, // Fixed height
+    padding: spacing.spacingSm, // Adjusted padding for fixed size
     borderRadius: 16,
     backgroundColor: colors.surfaceWhite,
     alignItems: 'center',
@@ -65,6 +67,8 @@ const styles = StyleSheet.create({
     ...typography.label,
     marginTop: spacing.xs,
     color: colors.textPrimary,
+    textAlign: 'center', // Center text
+    flexWrap: 'wrap', // Allow text to wrap
   },
   activeCategoryLabel: {
     color: colors.brandPurpleDark,
